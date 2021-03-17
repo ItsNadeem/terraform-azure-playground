@@ -31,6 +31,30 @@ resource "azurerm_app_configuration" "appconfig" {
   location            = azurerm_resource_group.rg_ref.location
 }
 
+resource "azurerm_logic_app_workflow" "logic_app_workflow_ref" {
+  name                = "tf-logic-app-workflow"
+  location            = azurerm_resource_group.rg_ref.location
+  resource_group_name = azurerm_resource_group.rg_ref.name
+}
+
+resource "azurerm_logic_app_trigger_http_request" "logic_trigger_http_request" {
+  name         = "tf-http-trigger"
+  logic_app_id = azurerm_logic_app_workflow.logic_app_workflow_ref.id
+
+  schema = <<SCHEMA
+{
+    "type": "object",
+    "properties": {
+        "hello": {
+            "type": "string"
+        }
+    }
+}
+SCHEMA
+
+}
+
+
 output "instrumentation_key" {
   value = azurerm_application_insights.app_insights_ref.instrumentation_key
 }
