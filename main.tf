@@ -55,6 +55,35 @@ SCHEMA
 }
 
 
+resource "azurerm_storage_account" "storage_acct" {
+  name                     = "teststorageacct101"
+  resource_group_name      = azurerm_resource_group.rg_ref.name
+  location                 = azurerm_resource_group.rg_ref.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_app_service_plan" "service_plan" {
+  name                = "tf-service-plan"
+  location            = azurerm_resource_group.rg_ref.location
+  resource_group_name = azurerm_resource_group.rg_ref.name
+
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+}
+
+resource "azurerm_function_app" "function_app" {
+  name                       = "tf-function-app"
+  location                   = azurerm_resource_group.rg_ref.location
+  resource_group_name        = azurerm_resource_group.rg_ref.name
+  app_service_plan_id        = azurerm_app_service_plan.service_plan.id
+  storage_account_name       = azurerm_storage_account.storage_acct.name
+  storage_account_access_key = azurerm_storage_account.storage_acct.primary_access_key
+}
+
+
 output "instrumentation_key" {
   value = azurerm_application_insights.app_insights_ref.instrumentation_key
 }
