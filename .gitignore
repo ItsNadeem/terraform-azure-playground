@@ -1,0 +1,6 @@
+*.tfvars
+*.tfstate
+*.tfstate.*
+.terraform/
+virtual-machine/terraform.tfstate
+.terraform.lock.hcl
